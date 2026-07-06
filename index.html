@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Library</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <script type="module" src="script.js"></script>
+  </head>
+  <body>
+    <div class="library"></div>
+
+    <button id="newBookBtn" type="button">New Book</button>
+
+    <dialog id="dialog">
+      <form>
+        <div>
+          <label for="title">Title: </label>
+          <input type="text" name="title" id="title" />
+        </div>
+        <div>
+          <label for="author">Author </label>
+          <input type="text" name="author" id="author" />
+        </div>
+        <div>
+          <label for="pages">Pages: </label>
+          <input type="number" name="pages" id="pages" />
+        </div>
+        <div>
+          <label for="read">Read: </label>
+          <select name="read" id="read">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <button id="addBtn">Add</button>
+        <button id="cancelBtn" formmethod="dialog">Cancel</button>
+      </form>
+    </dialog>
+  </body>
+</html>
