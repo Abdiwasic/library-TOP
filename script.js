@@ -1,62 +1,87 @@
-const libraryContainerEl = document.querySelector(".library");
-const newBookBtn = document.querySelector("#newBookBtn");
-const dialogEl = document.querySelector("dialog");
-const userValues = document.querySelectorAll("div > input, #read");
-const addBtn = document.querySelector("#addBtn");
-const cancelBtn = document.querySelector("#cancelBtn");
-
 const myLibrary = [];
+const bookContainer = document.querySelector(".book-shelf");
+const modal = document.getElementById("new-book-modal");
+const newBookBtn = document.getElementById("new-book-btn");
+const addButton = document.getElementById("submit-book-btn");
+const titleNode = document.getElementById("title");
+const authorNode = document.getElementById("author");
+const pagesNode = document.getElementById("pages");
+const readNode = document.getElementById("read");
 
 function Book(id, title, author, pages, read) {
-  if (!new.target) {
-    throw Error("You must use the 'new' operator to call the constructor");
-  }
   this.id = id;
   this.title = title;
   this.author = author;
-  this.pages = pages;
+  this.pages = `${pages} pages`;
   this.read = read;
-  this.info = function () {
-    return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read}`;
-  };
 }
 Book.prototype.toggleRead = function () {
-  this.read = this.read === "Yes" ? "No" : "Yes";
+  this.read = this.read ? !this.read : (this.read = true);
 };
+
 function addBookToLibrary(title, author, pages, read) {
   const id = crypto.randomUUID();
   const book = new Book(id, title, author, pages, read);
   myLibrary.push(book);
 }
 
-addBookToLibrary("NEVER SPLIT THE DIFFERENCE", "Chris Voss", 285, "No");
-addBookToLibrary(
-  "How To Win Friends And Influence People",
-  "Dale Carnegie",
-  315,
-  "Yes",
-);
+function displayBook() {
+  const fragment = document.createDocumentFragment();
 
-function displayEachBook() {
-  libraryContainerEl.innerHTML = "";
+  bookContainer.innerHTML = "";
   for (const book of myLibrary) {
-    const bookEl = `
-        <div class="card" data-id="${book.id}">
-            <h3>${book.title}</h3>
-            <p>Author: <strong>${book.author}</strong></p>
-            <p>Pages: ${book.pages}</p>
-            
-            <p><button type="button" class="read-status-toggle">Read</button> = ${book.read}</p>
-            <button type="button" class="remove">Remove</button>
-        </div>
-    `;
-    libraryContainerEl.insertAdjacentHTML("beforeend", bookEl);
+    const card = document.createElement("article");
+    card.setAttribute("data-id", book.id);
+    card.classList.add("book-card");
+
+    const hole = document.createElement("span");
+    hole.classList.add("book-card__hole");
+
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("book-card__body");
+
+    const h3El = document.createElement("h3");
+    h3El.classList.add("book-card__title");
+    h3El.textContent = book.title;
+
+    const pEl = document.createElement("p");
+    pEl.classList.add("book-card__author");
+    pEl.textContent = book.author;
+
+    const spanEl = document.createElement("span");
+    spanEl.classList.add("book-card__pages");
+    spanEl.textContent = book.pages;
+
+    cardBody.append(h3El, pEl, spanEl);
+
+    const bookCardStubEl = document.createElement("div");
+    bookCardStubEl.classList.add("book-card__stub");
+
+    const readBtn = document.createElement("button");
+    readBtn.classList.add("read-toggle");
+
+    if (book.read) {
+      readBtn.classList.add("is-read");
+      readBtn.textContent = "Read";
+    } else {
+      readBtn.textContent = "Not read";
+    }
+
+    const removeBtn = document.createElement("button");
+    removeBtn.classList.add("remove-btn");
+    removeBtn.setAttribute("aria-label", "Remove book");
+    removeBtn.textContent = "✕";
+
+    bookCardStubEl.append(readBtn, removeBtn);
+
+    card.append(hole, cardBody, bookCardStubEl);
+    fragment.append(card);
   }
+  removeBtn = document.querySelector(".remove-btn");
+  bookContainer.append(fragment);
 }
 
-function handleAddBook(e) {
-  e.preventDefault();
-  const [titleNode, authorNode, pagesNode, readNode] = userValues;
+function handleAddBtn() {
   if (
     titleNode.value === "" ||
     authorNode.value === "" ||
@@ -67,47 +92,43 @@ function handleAddBook(e) {
     titleNode.value,
     authorNode.value,
     pagesNode.value,
-    readNode.value,
+    readNode.checked,
   );
-  displayEachBook();
+
+  displayBook();
   titleNode.value = "";
   authorNode.value = "";
   pagesNode.value = "";
-  dialogEl.close();
+  readNode.value = readNode.checked = false;
+  modal.close();
 }
 
-function handleBookReadStatus(e) {
-  e.preventDefault();
-  if (!e.target.classList.contains("read-status-toggle")) return;
+function handleReadStatusBtn(e) {
+  if (!e.target.classList.contains("read-toggle")) return;
 
-  const cardEl = e.target.closest(".card");
-  const bookId = cardEl.dataset.id;
+  const card = e.target.closest(".book-card");
+  const bookId = card.dataset.id;
+
   const book = myLibrary.find((book) => book.id === bookId);
 
   book.toggleRead();
-
-  displayEachBook();
+  displayBook();
 }
 
-function handleRemoveBook(e) {
-  if (!e.target.classList.contains("remove")) return;
+function handleRemoveBtn(e) {
+  const target = e.target;
+  if (!e.target.classList.contains("remove-btn")) return;
 
-  const cardEl = e.target.closest(".card");
-  const bookId = cardEl.dataset.id;
+  const card = target.closest(".book-card");
+  const bookId = card.dataset.id;
 
   const bookIndex = myLibrary.findIndex((book) => book.id === bookId);
   myLibrary.splice(bookIndex, 1);
 
-  cardEl.remove();
+  displayBook();
 }
 
-newBookBtn.addEventListener("click", () => {
-  dialogEl.showModal();
-});
-
-addBtn.addEventListener("click", handleAddBook);
-
-displayEachBook();
-
-libraryContainerEl.addEventListener("click", handleRemoveBook);
-libraryContainerEl.addEventListener("click", handleBookReadStatus);
+newBookBtn.addEventListener("click", () => modal.showModal());
+addButton.addEventListener("click", handleAddBtn);
+bookContainer.addEventListener("click", handleReadStatusBtn);
+bookContainer.addEventListener("click", handleRemoveBtn);

@@ -5,39 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Library</title>
     <link rel="stylesheet" href="style.css" />
-
-    <script type="module" src="script.js"></script>
   </head>
   <body>
-    <div class="library"></div>
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand__mark">My Library</span>
+        <span class="brand__tag">The Odin Project</span>
+      </div>
+      <button class="btn btn--primary" id="new-book-btn">+ New book</button>
+    </header>
 
-    <button id="newBookBtn" type="button">New Book</button>
+    <section class="book-shelf"></section>
 
-    <dialog id="dialog">
-      <form>
-        <div>
-          <label for="title">Title: </label>
-          <input type="text" name="title" id="title" />
+    <dialog class="modal" id="new-book-modal">
+      <form method="dialog">
+        <div class="modal__header">
+          <h3>New book</h3>
+          <button class="modal__close" value="cancel" aria-label="Close">
+            ✕
+          </button>
         </div>
-        <div>
-          <label for="author">Author </label>
-          <input type="text" name="author" id="author" />
+        <div class="modal__body">
+          <div class="form-field">
+            <label class="form-label" for="title">Title</label>
+            <input
+              id="title"
+              type="text"
+              placeholder="e.g. The Hobbit"
+              name="title"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="author">Author</label>
+            <input
+              id="author"
+              type="text"
+              placeholder="e.g. J.R.R. Tolkien"
+              name="author"
+              required
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="pages">Pages</label>
+            <input
+              id="pages"
+              type="number"
+              placeholder="310"
+              name="pages"
+              required
+            />
+          </div>
+          <div class="form-field checkbox-field">
+            <input id="read" type="checkbox" name="read" />
+            <label for="read">Already read</label>
+          </div>
         </div>
-        <div>
-          <label for="pages">Pages: </label>
-          <input type="number" name="pages" id="pages" />
+        <div class="modal__footer">
+          <button class="btn btn--secondary" value="cancel">Cancel</button>
+          <button
+            type="button"
+            class="btn btn--primary"
+            value="add"
+            id="submit-book-btn"
+          >
+            Add book
+          </button>
         </div>
-        <div>
-          <label for="read">Read: </label>
-          <select name="read" id="read">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
-        </div>
-
-        <button id="addBtn">Add</button>
-        <button id="cancelBtn" formmethod="dialog">Cancel</button>
       </form>
     </dialog>
+
+    <script src="script.js"></script>
   </body>
 </html>
